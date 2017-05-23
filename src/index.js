@@ -4,12 +4,10 @@
 import { chan, buffers, go, put, take } from 'js-csp';
 
 export default class ResponsePool {
-  constructor(bufSize = 1, deadline) {
+  constructor(bufSize = 1) {
     this.pending = 0;
     this.waiting = 0;
     this.chan = chan(buffers.sliding(bufSize));
-
-    if (deadline > 0) setDeadline(this, deadline);
   }
 
   resetCh() {
@@ -42,9 +40,4 @@ function* subRespWait(rPool, cb) {
   rPool.waiting--;
 
   rPool.pubResp(val, cb);
-}
-
-function setDeadline(rPool, deadline) {
-  rPool.resetCh();
-  setTimeout(() => setDeadline(rPool, deadline), deadline);
 }
