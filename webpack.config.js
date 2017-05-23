@@ -7,39 +7,39 @@ const dist = path.resolve(__dirname, 'dist')
 const BabiliPlugin = require("babili-webpack-plugin");
 
 module.exports = {
-	context: src,
-	entry: './index.js',
-	output: {
-		path: dist,
-		publicPath: 'dist',
-		filename: 'response-pool.js',
-		library: 'response-pool',
-		libraryTarget: 'umd',
-		umdNamedDefine: true
-	},
-	plugins: [
-    	new BabiliPlugin()
-	],
-	module: {
-		rules: [
-			{
-				enforce: "pre",
-				test: /\.js$/,
-				include: src,
-				exclude: /node_modules/,
-				use: [
-					{
-						loader: 'babel-loader',
-						options: {
-							babelrc: false,
-							presets: [
-								'es2017'
-							]
-						}
-					},
-					'eslint-loader'
-				]
-			}
-		]
-	}
+  context: src,
+  entry: './index.js',
+  output: {
+    path: dist,
+    publicPath: 'dist',
+    filename: 'response-pool.js',
+    library: 'response-pool',
+    libraryTarget: 'umd',
+    umdNamedDefine: true
+  },
+  plugins: [
+      new BabiliPlugin()
+  ],
+  module: {
+    rules: [
+      {
+        enforce: "pre",
+        test: /\.js$/,
+        include: src,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              babelrc: false,
+              presets: [
+                'es2017'
+              ]
+            }
+          },
+          'eslint-loader'
+        ]
+      }
+    ]
+  }
 }
