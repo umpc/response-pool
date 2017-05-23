@@ -1,0 +1,29 @@
+{
+  "name": "response-pool",
+  "version": "0.1.0",
+  "description": "Response Pool is a very small library, based on js-csp, that can be used to pause subsequent function calls and pass a value from the first call in the concurrent group to the callback functions of subsequent calls as soon as it becomes available.",
+  "main": "dist/response-pool.js",
+  "scripts": {
+    "build": "webpack"
+  },
+  "author": "Justin Lowery",
+  "license": "MIT",
+  "dependencies": {
+    "js-csp": "^0.9.3"
+  },
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-loader": "^7.0.0",
+    "babel-preset-es2017": "^6.24.1",
+    "babili-webpack-plugin": "^0.1.0",
+    "eslint": "^3.19.0",
+    "eslint-loader": "^1.7.1",
+    "webpack": "^2.6.0"
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 8,
+      "sourceType": "module"
+    }
+  }
+}
