@@ -1,6 +1,6 @@
 # Response Pool
 
-Response Pool is a very small library (< 50 LoC), based on [js-csp](github.com/ubolonton/js-csp), that can be used to pause subsequent function calls and pass a value from the first call to the callback functions of later calls as soon as it becomes available.
+Response Pool is a very small library (< 50 LoC), based on [js-csp](https://github.com/ubolonton/js-csp), that can be used to pause subsequent function calls and pass a value from the first call to the callback functions of later calls as soon as it becomes available.
 
 For example: Functions within a Web API library may depend on having an access token available. If the library instance has not yet been authenticated, and then four such functions are executed from within the same block, each function will check the token state and will attempt to concurrently log-in.
 
@@ -26,8 +26,13 @@ function expensiveCall(respCallback) {
     rPool.addPending();                           // Effectively disable expensiveNetworkRequest.
 
     handler(expensiveNetworkRequest(), val => {
-      rPool.pubResp(val, respCallback);           // Publish response value to subscribers.
-      rPool.delPending();                         // Enable expensiveNetworkRequest again.
+      try {
+        rPool.pubResp(val, respCallback);         // Publish response value to subscribers.
+        rPool.delPending();                       // Enable expensiveNetworkRequest again.
+      }
+      catch (ex) {
+        throw ex;
+      }
     });
   }
   catch (ex) {
