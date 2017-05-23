@@ -13,7 +13,7 @@ export default class ResponsePool {
   }
 
   resetCh() {
-	if (this.pubPending()) delPending();
+    if (this.pubPending()) delPending();
     this.chan.close();
     this.chan = chan();
   }
