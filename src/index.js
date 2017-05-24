@@ -8,18 +8,22 @@ export default class ResponsePool {
     this.reset(bufSize);
   }
   reset(bufSize = 1) {
-    this.pending = 0;
-    this.waiting = 0;
     if (this.chan) this.chan.close();
     this.chan = chan(buffers.sliding(bufSize));
+    this.pending = 0;
+    this.waiting = 0;
   }
 
   addPending() { this.pending++; }
+  done() {
+    if (this.isPending()) this.pending--;
+  }
+
   isPending() { return this.pending > 0; }
-  done() { if (this.isPending()) this.pending--; }
+  isWaiting() {	return this.waiting > 0; }
 
   pubVal(val, cb) {
-    if (this.waiting > 0) go(putVal, [this.chan, val]);
+    if (this.isWaiting()) go(putVal, [this.chan, val]);
     if (cb) cb(val);
   }
   subVal(cb) {
@@ -32,7 +36,7 @@ function* putVal(ch, val) { yield put(ch, val); }
 function* valWait(rPool, cb) {
   rPool.waiting++;
   const val = yield take(rPool.chan);
-  rPool.waiting--;
+  if (rPool.isWaiting()) rPool.waiting--;
 
   rPool.pubVal(val, cb);
 }
