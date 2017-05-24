@@ -4,40 +4,35 @@
 import { chan, buffers, go, put, take } from 'js-csp';
 
 export default class ResponsePool {
-  constructor(bufSize = 1) {
+  constructor(bufSize) {
+    this.reset(bufSize);
+  }
+  reset(bufSize = 1) {
     this.pending = 0;
     this.waiting = 0;
+    if (this.chan) this.chan.close();
     this.chan = chan(buffers.sliding(bufSize));
   }
 
-  resetCh() {
-    if (this.pubPending()) delPending();
-    this.chan.close();
-    this.chan = chan();
-  }
-
   addPending() { this.pending++; }
-  delPending() { if (this.pending > 0) this.pending--; }
-  pubPending() { return this.pending > 0; }
+  isPending() { return this.pending > 0; }
+  done() { if (this.isPending()) this.pending--; }
 
-  pubResp(val, cb) {
-    if (this.waiting > 0) go(putVal, [this, val]);
+  pubVal(val, cb) {
+    if (this.waiting > 0) go(putVal, [this.chan, val]);
     if (cb) cb(val);
   }
-
-  subResp(cb) {
-    go(subRespWait, [this, cb]);
+  subVal(cb) {
+    go(valWait, [this, cb]);
   }
 }
 
-function* putVal(rPool, val) {
-  yield put(rPool.chan, val);
-}
+function* putVal(ch, val) { yield put(ch, val); }
 
-function* subRespWait(rPool, cb) {
+function* valWait(rPool, cb) {
   rPool.waiting++;
   const val = yield take(rPool.chan);
   rPool.waiting--;
 
-  rPool.pubResp(val, cb);
+  rPool.pubVal(val, cb);
 }

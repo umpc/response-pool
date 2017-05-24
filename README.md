@@ -1,6 +1,6 @@
 # Response Pool
 
-Response Pool is a very small library (< 50 LoC), based on [js-csp](https://github.com/ubolonton/js-csp), that can be used to pause subsequent function calls and pass a value from the first call to the callback functions of later calls as soon as it becomes available.
+Response Pool is a very small library (< 40 LoC), based on [js-csp](https://github.com/ubolonton/js-csp), that can be used to pause subsequent function calls and pass a value from the first call to the callback functions of later calls as soon as it becomes available.
 
 For example: Functions within a Web API library may depend on having an access token available. If the library instance has not yet been authenticated, and then four such functions are executed from within the same block, each function will check the token state and will attempt to concurrently log-in.
 
@@ -18,17 +18,17 @@ import ResponsePool from 'response-pool';
 const rPool = new ResponsePool();                 // Create a new pool for a specific function or set of parameters.
 
 function expensiveCall(respCallback) {
-  if (rPool.pubPending()) {                       // Check if a response value might be published.
-    rPool.subResp(respCallback);                  // Wait for the value, then pass it to respCallback.
+  if (rPool.isPending()) {                        // Check if a response value might be published.
+    rPool.subVal(respCallback);                   // Wait for the value, then pass it to respCallback.
     return;                                       // Done.
   }
   try {
-    rPool.addPending();                           // Effectively disable expensiveNetworkRequest.
+    rPool.pending();                              // Effectively disable expensiveNetworkRequest.
 
     handler(expensiveNetworkRequest(), val => {
       try {
-        rPool.pubResp(val, respCallback);         // Publish response value to subscribers.
-        rPool.delPending();                       // Enable expensiveNetworkRequest again.
+        rPool.pubVal(val, respCallback);          // Publish response value to subscribers.
+        rPool.done();                             // Enable expensiveNetworkRequest again.
       }
       catch (ex) {
         throw ex;
@@ -36,7 +36,7 @@ function expensiveCall(respCallback) {
     });
   }
   catch (ex) {
-    rPool.resetCh();                              // Send null value to subscribers and delete pending response.
+    rPool.reset();                                // Publish null value to subscribers and enable expensiveNetworkRequest again.
     throw ex;
   }
 }
