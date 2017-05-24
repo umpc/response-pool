@@ -17,7 +17,7 @@ export default class ResponsePool {
   }
 
   addPending() { this.pending++; }
-  delPending() { this.pending--; }
+  delPending() { if (this.pending > 0) this.pending--; }
   pubPending() { return this.pending > 0; }
 
   pubResp(val, cb) {
