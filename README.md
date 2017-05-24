@@ -23,7 +23,7 @@ function expensiveCall(respCallback) {
     return;                                       // Done.
   }
   try {
-    rPool.pending();                              // Effectively disable expensiveNetworkRequest.
+    rPool.addPending();                           // Effectively disable expensiveNetworkRequest.
 
     handler(expensiveNetworkRequest(), val => {
       try {
