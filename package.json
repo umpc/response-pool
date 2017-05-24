@@ -1,6 +1,6 @@
 {
   "name": "response-pool",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Response Pool is a very small library, based on js-csp, that can be used to pause subsequent function calls and pass a value from the first call in the concurrent group to the callback functions of subsequent calls as soon as it becomes available.",
   "main": "dist/response-pool.js",
   "scripts": {

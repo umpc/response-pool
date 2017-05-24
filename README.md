@@ -18,12 +18,12 @@ import ResponsePool from 'response-pool';
 const rPool = new ResponsePool();                 // Create a new pool for a specific function or set of parameters.
 
 function expensiveCall(respCallback) {
-  if (rPool.isPending()) {                        // Check if a response value might be published.
+  if (rPool.pending) {                        // Check if a response value might be published.
     rPool.subVal(respCallback);                   // Wait for the value, then pass it to respCallback.
     return;                                       // Done.
   }
   try {
-    rPool.addPending();                           // Effectively disable expensiveNetworkRequest.
+    rPool.setPending();                           // Effectively disable expensiveNetworkRequest.
 
     handler(expensiveNetworkRequest(), val => {
       try {
@@ -44,13 +44,13 @@ function expensiveCall(respCallback) {
 
 * Each implementation should determine whether or not a response value is pending, and then if so, pass in a callback function to the (Subscribe to Response Value) ```subVal``` method.
 
-* The ```addPending``` method is called from within a ```try...catch``` block. It starts the process of subscribing subsequently redundant calls to the pool, which was set up in the previous block.
+* The ```setPending``` method is called from within a ```try...catch``` block. It starts the process of subscribing subsequently redundant calls to the pool, which was set up in the previous block.
 
 * The ```catch``` block should include a ```reset``` method call. This sends back a ```null``` value to, and releases, the blocking calls.
 
 * From within the callback that passes the response value into scope, the ```pubVal``` method is used, by passing in the response value and a callback function.
 
-* The ```done``` method is called after the response value is published to the pool. It removes the pending request state that was set by the ```addPending``` method.
+* The ```done``` method is called after the response value is published to the pool. It removes the pending request state that was set by the ```setPending``` method.
 
 ## License
 

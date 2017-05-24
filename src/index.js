@@ -10,16 +10,12 @@ export default class ResponsePool {
   reset(bufSize = 1) {
     if (this.chan) this.chan.close();
     this.chan = chan(buffers.sliding(bufSize));
-    this.pending = 0;
+    this.pending = false;
     this.waiting = 0;
   }
+  setPending() { this.pending = true; }
+  done() { this.pending = false; }
 
-  addPending() { this.pending++; }
-  done() {
-    if (this.isPending()) this.pending--;
-  }
-
-  isPending() { return this.pending > 0; }
   isWaiting() {	return this.waiting > 0; }
 
   pubVal(val, cb) {
