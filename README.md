@@ -1,6 +1,6 @@
 # Response Pool
 
-Response Pool is a very small library (< 40 LoC), based on [js-csp](https://github.com/ubolonton/js-csp), that can be used to pause subsequent function calls and pass a value from the first call to the callback functions of later calls as soon as it becomes available.
+Response Pool is a very small library (< 40 LoC), based on [js-csp](https://github.com/ubolonton/js-csp), that can be used to pause subsequently redundant function calls and pass a value from the first call to the callback functions of later calls as soon as it becomes available.
 
 For example: Functions within a Web API library may depend on having an access token available. If the library instance has not yet been authenticated, and then four such functions are executed from within the same block, each function will check the token state and will attempt to concurrently log-in.
 
@@ -41,6 +41,16 @@ function expensiveCall(respCallback) {
   }
 }
 ```
+
+* Each implementation should determine whether or not a response value is pending and then if so, pass in a callback function to the (Subscribe to Response Value) ```subVal``` method.
+
+* The ```addPending``` method is called from within a ```try...catch``` block. It starts the process of subscribing subsequently redundant calls to the pool, which was set up in the previous block.
+
+* The ```catch``` block should include a ```reset``` method call. This sends back a ```null``` value to, and releases, the blocking calls.
+
+* From within the callback that passes the response value into scope, the ```pubVal``` method is used, by passing in the response value and a callback function.
+
+* The ```done``` method is called after the response value is published to the pool. It removes the pending request state that was set by the ```addPending``` method.
 
 ## License
 
