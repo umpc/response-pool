@@ -18,7 +18,7 @@ import ResponsePool from 'response-pool';
 const rPool = new ResponsePool();                 // Create a new pool for a specific function or set of parameters.
 
 function expensiveCall(respCallback) {
-  if (rPool.pending) {                        // Check if a response value might be published.
+  if (rPool.pending) {                            // Check if a response value might be published.
     rPool.subVal(respCallback);                   // Wait for the value, then pass it to respCallback.
     return;                                       // Done.
   }
