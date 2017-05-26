@@ -20,7 +20,7 @@ export default class ResponsePool {
 
   pubVal(val, cb) {
     if (this.isWaiting()) go(putVal, [this.chan, val]);
-    if (cb) cb(val);
+    if (cb && val != null) cb(val);
   }
   subVal(cb) {
     go(valWait, [this, cb]);
