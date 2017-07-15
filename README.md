@@ -2,6 +2,8 @@
 
 Response Pool is a very small library (< 40 LoC), based on [js-csp](https://github.com/ubolonton/js-csp), that can be used to pause subsequently redundant function calls and pass a value from the first call to the callback functions of the redundant calls as soon as it becomes available.
 
+*Note:* If you are using Redux, using the ```takeLatest``` generator from [Redux Saga](https://github.com/redux-saga/redux-saga), specifically ```redux-saga/effects```, could be a more appropriate solution to this problem, in the form of Redux middleware, that also takes advantage of ES6 generators.
+
 For example: Functions within a Web API library may depend on having an access token available. If the library instance has not yet been authenticated, and then four such functions are executed from within the same block, each function will check the token state and will attempt to concurrently log-in.
 
 This library provides an easy way of preventing this behavior in JavaScript, and in the example case, prevents four concurrent login attempts when only one with the same parameters is desired.
